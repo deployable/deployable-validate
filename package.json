@@ -12,7 +12,7 @@
     "test:int": "mocha test/int_*",
     "test:unit": "mocha test/unit_*",
     "test:coverage": "istanbul cover _mocha",
-    "npm:testing": "set -uex && npm test && npm version prerelease && git push && npm publish --testing && git push --tags",
+    "npm:testing": "set -uex && npm test && npm version prerelease && git push && npm publish --tag testing && git push --tags",
     "npm:publish": "set -uex && npm run test:coverage && [ -z \"$(git status --porcelain)\" ] && npm version patch && git push && npm publish && git push --tags"
   },
   "keywords": [

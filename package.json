@@ -17,7 +17,7 @@
     "validation",
     "error"
   ],
-  "author": "matt@deployable.co",
+  "author": "matt at deployable.co",
   "license": "MIT",
   "dependencies": {
     "debug": "^2.0",

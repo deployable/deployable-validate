@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/deployable/node-deployable-validation.git"
   },
-  "main": "index.js",
+  "main": "lib/validate.js",
   "scripts": {
     "test": "mocha",
     "test:int": "mocha test/int_*",

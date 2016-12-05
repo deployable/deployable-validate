@@ -11,7 +11,9 @@
     "test": "mocha",
     "test:int": "mocha test/int_*",
     "test:unit": "mocha test/unit_*",
-    "test:coverage": "istanbul cover _mocha"
+    "test:coverage": "istanbul cover _mocha",
+    "npm:publish": "set -uex && npm run test:coverage && [ -z \"$(git status --porcelain)\" ] && npm version patch && git push && git push --tags && npm publish"
+
   },
   "keywords": [
     "validation",

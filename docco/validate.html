@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Validate</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="validate.html">
+                  validate.js
+                </a>
+              
+                
+                <a class="source" href="validate_config.html">
+                  validate_config.js
+                </a>
+              
+                
+                <a class="source" href="validate_group.html">
+                  validate_group.js
+                </a>
+              
+                
+                <a class="source" href="validate_test.html">
+                  validate_test.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <h1 id="validate">Validate</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>The main validation function return true when OK and false when validation failes
+<code>*Throw</code> returns true on ok and nothing on validation failure.</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>The <code>*Message</code> and <code>*Error</code> functions/methods flip the return as they 
+are generating a message or error object.  They will return the 
+message or error if one exists. Otherwise they will return
+<code>undefined</code> when validation is ok, which is the logic opposite.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+
+<span class="hljs-keyword">const</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+<span class="hljs-keyword">const</span> debug = <span class="hljs-built_in">require</span>(<span class="hljs-string">'debug'</span>)(<span class="hljs-string">'dply:data:validate'</span>)
+
+<span class="hljs-keyword">const</span> {ValidationError} = <span class="hljs-built_in">require</span>(<span class="hljs-string">'deployable-errors'</span>)
+<span class="hljs-keyword">const</span> ValidateTest = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./validate_test'</span>)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>const ValidateGroup = require(‘./validate_group’)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-keyword">const</span> validate_config = <span class="hljs-built_in">require</span>(<span class="hljs-string">'./validate_config'</span>)
+
+
+
+
+<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Validate</span> </span>{</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Attach data during load that es6 won’t let me put in here
+<code>.init</code> is called after the class definition</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> init(){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Init the tests in a class variable</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    Validate._tests = {}
+    _.forEach(validate_config, (test_details, test_name)=&gt; {
+      Validate.addTest(test_name, test_details)
+    })
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <h3 id="public-methods">Public methods</h3>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <h4 id="-a-an-as-test_name-values-name-"><code>.a</code> <code>.an</code> <code>.as(test_name, values..., name)</code></h4>
+<p>Main test runners <code>a</code> <code>an</code> <code>as</code>. Pick which one feels natural,
+it changes on each type of validation test.
+Returns <code>true</code> on ok. <code>false</code> on validation failure</p>
+<p>The last argument is an optional “name” for the value you
+are checking so the error message are descriptive. This will
+default to the generic <code>Value</code> if not supplied</p>
+<p>Usage:</p>
+<p>   Validate.a(‘string’, ‘test’, ‘mystring’) =&gt; true
+   Validate.a(‘string’, 5, ‘mystring’) =&gt; false
+   Validate.an(‘integer’, 5, ‘dollars’) =&gt; true
+   Validate.as(‘alpha’, “qwertre4, ‘username’) =&gt; false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">static</span> a(...args){ <span class="hljs-keyword">return</span> Validate.as(...args) }
+  <span class="hljs-keyword">static</span> an(...args){ <span class="hljs-keyword">return</span> Validate.as(...args) }
+  <span class="hljs-keyword">static</span> <span class="hljs-keyword">as</span>(test, ...args){
+    <span class="hljs-keyword">let</span> mtest = Validate.getTest(test)
+    <span class="hljs-keyword">let</span> res = mtest.test(...args)
+    <span class="hljs-keyword">return</span> res
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>Run a test and default to <code>throw</code> the <code>Error</code>
+Otherwise <code>true</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> andThrow(test_name, ...args){
+    <span class="hljs-keyword">let</span> test = Validate.getTest(test_name)
+    <span class="hljs-keyword">let</span> err = ( ! test.run(...args) ) ? test.getError(...args) : <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">if</span> ( err ) <span class="hljs-keyword">throw</span> err
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>Run a test and return the error message, if any
+Otherwise <code>undefined</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> toMessage(test_name, ...args){
+    <span class="hljs-keyword">let</span> test = Validate.getTest(test_name)
+    <span class="hljs-keyword">let</span> msg = ( ! test.run(...args) ) ? test.getMessage(...args) : <span class="hljs-literal">undefined</span>
+    <span class="hljs-keyword">return</span> msg
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Run a test and return the error Object, if any
+Otherwise <code>undefined</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> toError(test_name, ...args){
+    <span class="hljs-keyword">let</span> test = Validate.getTest(test_name)
+    <span class="hljs-keyword">let</span> err = ( ! test.run(...args) ) ? test.getError(...args) : <span class="hljs-literal">undefined</span>
+    <span class="hljs-keyword">return</span> err
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h4 id="-language-test_name-values-name-"><code>language(test_name, values..., name)</code></h4>
+<h4 id="-string-test_name-values-name-"><code>string(test_name, values..., name)</code></h4>
+<h4 id="-number-test_name-values-name-"><code>number(test_name, values..., name)</code></h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>Add semantic groups. Only runs the test if it’s in that group
+not populated from config :/
+would be nice to have `Val.language.testname(args) too. check mocha</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">static</span> language(...args){ <span class="hljs-keyword">return</span> Validate.runGroupTest(<span class="hljs-string">'language'</span>, ...args) }
+  <span class="hljs-keyword">static</span> string(...args){ <span class="hljs-keyword">return</span> Validate.runGroupTest(<span class="hljs-string">'string'</span>, ...args) }
+  <span class="hljs-keyword">static</span> number(...args){ <span class="hljs-keyword">return</span> Validate.runGroupTest(<span class="hljs-string">'number'</span>, ...args) }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h4 id="-gettest-test_namestring-"><code>getTest(test_nameString)</code></h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>Retreive a configured test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  <span class="hljs-keyword">static</span> getTest(test_name){
+    <span class="hljs-keyword">let</span> test = Validate._tests[test_name]
+    <span class="hljs-keyword">if</span> (!test) <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`No test named "<span class="hljs-subst">${test_name}</span>" available`</span>)
+    <span class="hljs-keyword">return</span> test
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h4 id="-addtest-test_namestring-configobject-"><code>addTest(test_nameString, configObject)</code></h4>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Adds a new test, from json config</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p>   let conf = { 
+     args: [‘value’, ‘expected’],
+     test: (value, expected) =&gt; somethingBoolean(value, expected),
+     message: “Something was {{value}}. Should have been {{expected}}”
+   }
+   Validate.addTest(‘expected’, conf)</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">static</span> addTest(test_label, test_config){
+    debug(<span class="hljs-string">'Adding test config "%s". options:'</span>, test_label, test_config)
+    <span class="hljs-keyword">if</span> ( Validate._tests[test_label] ) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`Test label "<span class="hljs-subst">${test_label}</span>" already exists`</span>)
+    <span class="hljs-keyword">let</span> test = <span class="hljs-keyword">new</span> ValidateTest(test_label, test_config)
+    <span class="hljs-keyword">return</span> Validate._tests[test.label] = test
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h3 id="not-so-public-methods">Not so public methods</h3>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">static</span> runGroupTest(group_name, test, ...args){
+    <span class="hljs-keyword">let</span> group = Validate.getTest(test).group
+    <span class="hljs-keyword">if</span> (group !== group_name) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`No test "<span class="hljs-subst">${test}</span>" in group "<span class="hljs-subst">${group_name}</span>"`</span>)
+    <span class="hljs-keyword">return</span> Validate.as(test, ...args)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h2 id="instance">Instance</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <p>The instance allows you to build suites of tests and run them as a group.
+Useful for large forms or complex rule sets when you want to report all
+errors to the user, not just the first</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+  <span class="hljs-keyword">constructor</span>(options = {}){
+    debug(<span class="hljs-string">'creating Validation instance'</span>, options)</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p>Store a suite of tests</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>._tests = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <p>Store test results</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>._results = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Store test errors</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>._errors = []</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Test mode
+<code>throw</code> errors
+Return an array of <code>error</code>
+Return an array of <code>message</code>
+Return an array of <code>boolean</code> test results</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">if</span> ( options.throw ) <span class="hljs-keyword">this</span>.modeThrow()
+    <span class="hljs-keyword">if</span> ( options.errors ) <span class="hljs-keyword">this</span>.modeErrors()
+    <span class="hljs-keyword">if</span> ( options.messages ) <span class="hljs-keyword">this</span>.modeMessages()
+    <span class="hljs-keyword">if</span> ( options.results ) <span class="hljs-keyword">this</span>.modeResults()
+    <span class="hljs-keyword">if</span> ( ! <span class="hljs-keyword">this</span>.mode ) <span class="hljs-keyword">this</span>.modeThrow()
+
+  }
+
+  modeThrow(){
+    <span class="hljs-keyword">this</span>.mode = <span class="hljs-string">'throw'</span>
+    <span class="hljs-keyword">this</span>.throw = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">this</span>.error = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.message = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.result = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.function = <span class="hljs-string">'andThrow'</span>
+  }
+  modeErrors(){
+    <span class="hljs-keyword">this</span>.mode = <span class="hljs-string">'errors'</span>
+    <span class="hljs-keyword">this</span>.throw = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.error = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">this</span>.message = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.result = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.function = <span class="hljs-string">'toError'</span>
+  }
+  modeMessages(){
+    <span class="hljs-keyword">this</span>.mode = <span class="hljs-string">'message'</span>
+    <span class="hljs-keyword">this</span>.throw = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.error = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.message = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">this</span>.result = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.function = <span class="hljs-string">'toMessage'</span>
+  }
+  modeResults(){
+    <span class="hljs-keyword">this</span>.mode = <span class="hljs-string">'results'</span>
+    <span class="hljs-keyword">this</span>.throw = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.error = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.message = <span class="hljs-literal">false</span>
+    <span class="hljs-keyword">this</span>.result = <span class="hljs-literal">true</span>
+    <span class="hljs-keyword">this</span>.function = <span class="hljs-string">'as'</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>Add a test definition to array to be run
+Type is require. args are dependent on the validation test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  add( test_type, ...args ){
+    <span class="hljs-keyword">let</span> test_def = [test_type, ...args]
+    debug(<span class="hljs-string">'add test_def'</span>, test_def)
+    <span class="hljs-keyword">this</span>._tests.push(test_def)
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>Run all configure test on the instance</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  run(){
+    <span class="hljs-keyword">this</span>._tests.forEach(<span class="hljs-function">(<span class="hljs-params">test</span>) =&gt;</span> <span class="hljs-keyword">this</span>.runTest(test))
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Run a single test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  runTest(test){
+    <span class="hljs-keyword">let</span> test_type = _.head(test)
+    <span class="hljs-keyword">let</span> args = _.tail(test)
+    <span class="hljs-keyword">let</span> result = Validate[<span class="hljs-keyword">this</span>.function](test_type, ...args)
+    debug(<span class="hljs-string">'result mode thisres[%s] type[%s] valfn[%s] result[%s]'</span>, <span class="hljs-keyword">this</span>.result, test_type, <span class="hljs-keyword">this</span>.function, result)
+    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">this</span>.result) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>result mode stores all info about the result and test in an array</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._results.push([result, ...test])
+      <span class="hljs-keyword">if</span> ( result !== <span class="hljs-literal">true</span> &amp;&amp; result !== <span class="hljs-literal">undefined</span> ) <span class="hljs-keyword">this</span>._errors.push([result, ...test])
+    } <span class="hljs-keyword">else</span> {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Otherwise just store what was returned </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>      <span class="hljs-keyword">this</span>._results.push(result)
+      <span class="hljs-keyword">if</span> ( result !== <span class="hljs-literal">true</span> &amp;&amp; result !== <span class="hljs-literal">undefined</span> ) <span class="hljs-keyword">this</span>._errors.push(result)
+    }
+    <span class="hljs-keyword">return</span> result
+  }
+
+  get errors(){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <p>if ( this._errors.length === 0 ) return false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._errors
+  }
+
+  set errors(arg){
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'errors should not be set'</span>, {<span class="hljs-attr">arg</span>:arg})
+  }
+
+}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Allow vars to be attached to the class</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>Validate.init()</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Attach class variables</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports = Validate
+<span class="hljs-built_in">module</span>.exports.validate_config = validate_config</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Attach errors to the export</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre><span class="hljs-built_in">module</span>.exports.ValidationError = ValidationError</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

@@ -8,6 +8,7 @@
   },
   "main": "lib/validate.js",
   "scripts": {
+    "docco": "docco -o docco/ lib/*",
     "test": "mocha",
     "test:int": "mocha test/int_*",
     "test:unit": "mocha test/unit_*",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "coffee-script": "~1.12.0",
+    "docco": "0.7.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.2.0"
   }

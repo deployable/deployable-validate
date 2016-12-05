@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>ValidateTest</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="viewport" content="width=device-width, target-densitydpi=160dpi, initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
+  <link rel="stylesheet" media="all" href="docco.css" />
+</head>
+<body>
+  <div id="container">
+    <div id="background"></div>
+    
+      <ul id="jump_to">
+        <li>
+          <a class="large" href="javascript:void(0);">Jump To &hellip;</a>
+          <a class="small" href="javascript:void(0);">+</a>
+          <div id="jump_wrapper">
+          <div id="jump_page_wrapper">
+            <div id="jump_page">
+              
+                
+                <a class="source" href="validate.html">
+                  validate.js
+                </a>
+              
+                
+                <a class="source" href="validate_config.html">
+                  validate_config.js
+                </a>
+              
+                
+                <a class="source" href="validate_group.html">
+                  validate_group.js
+                </a>
+              
+                
+                <a class="source" href="validate_test.html">
+                  validate_test.js
+                </a>
+              
+            </div>
+          </div>
+        </li>
+      </ul>
+    
+    <ul class="sections">
+        
+        
+        
+        <li id="section-1">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-2">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <h1 id="validatetest">ValidateTest</h1>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-3">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>House the details and methods for a configured test.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>
+<span class="hljs-keyword">const</span> _ = <span class="hljs-built_in">require</span>(<span class="hljs-string">'lodash'</span>)
+<span class="hljs-keyword">const</span> debug = <span class="hljs-built_in">require</span>(<span class="hljs-string">'debug'</span>)(<span class="hljs-string">'dply:data:validate_test'</span>)
+<span class="hljs-keyword">const</span> {ValidationError} = <span class="hljs-built_in">require</span>(<span class="hljs-string">'deployable-errors'</span>)
+
+
+<span class="hljs-built_in">module</span>.exports = <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">ValidateTest</span> </span>{
+
+  <span class="hljs-keyword">constructor</span> ( label, options = {} ) {</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-4">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p>Label/name of test - required</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.label = label</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-5">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-5">&#182;</a>
+              </div>
+              <p>Template options for _.template (set before <code>.message</code>!)
+Defaults to mustache <code>{{var}}</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.template_options = options.template_options || { <span class="hljs-attr">interpolate</span>: <span class="hljs-regexp">/{{([\s\S]+?)}}/g</span> }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-6">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>The test function to use - required
+Any function that returns true/false</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.test = options.test</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-7">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>The string template to use as a message, or function to return string message</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.message = options.message || <span class="hljs-string">'{{name}} failed validation'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-8">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p>Names of arguments, used for the message/templates</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.arg_names = options.arg_names || options.args || [<span class="hljs-string">'value'</span>]</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-9">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>A group this test belongs to.</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.group = options.group || <span class="hljs-string">'none'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-10">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p>The default name of the value when one is not passed in</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.default_value_name = options.default_value_name || <span class="hljs-string">'Value'</span></pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-11">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>Modify the quoting of names/words</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">this</span>.word_quotes = options.word_quotes || <span class="hljs-string">'"'</span>
+
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-12">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <h2 id="getters-setters">Getters/Setters</h2>
+<p>All of them</p>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-13">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <h4 id="-label-"><code>label</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get label() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._label }
+  set label(str) { 
+    <span class="hljs-keyword">if</span> ( !_.isString(str) ) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The tests label must be a string. Got <span class="hljs-subst">${<span class="hljs-keyword">typeof</span> str}</span>`</span>)
+    <span class="hljs-keyword">this</span>._label = str
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-14">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <h4 id="-template_options-"><code>template_options</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get template_options(){ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._template_options }
+  set template_options(opts){ 
+   debug(<span class="hljs-string">'setting template options'</span>, opts)
+    <span class="hljs-keyword">this</span>._template_options = opts
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-15">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <h4 id="-test-"><code>test</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get test() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._test }
+  set test(test_fn) { 
+    <span class="hljs-keyword">if</span> ( ! _.isFunction(test_fn) ) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The "test" property must be a function, not a <span class="hljs-subst">${<span class="hljs-keyword">typeof</span> test_fn}</span>`</span>)
+    <span class="hljs-keyword">this</span>._test = test_fn
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-16">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <h4 id="-message-"><code>message</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get message(){ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._message}</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-17">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>Set a new template string/fn for the message</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  set message(msg){
+    <span class="hljs-keyword">if</span> ( ! _.isString(msg) &amp;&amp; ! _.isFunction(msg) ) 
+      <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The tests "message" property must be a string or function, not a <span class="hljs-subst">${<span class="hljs-keyword">typeof</span> msg}</span>`</span>)
+    <span class="hljs-keyword">this</span>._message = msg
+    <span class="hljs-keyword">if</span> ( _.isString(msg) ) <span class="hljs-keyword">this</span>.compileTemplate()
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-18">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <h4 id="-template-"><code>template</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get template(){ <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._template }
+  set template(tmpl){
+    <span class="hljs-keyword">throw</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The tests template can not be set directly. Set the template string in "message"'</span>)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-19">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-19">&#182;</a>
+              </div>
+              <h4 id="-arg_names-"><code>arg_names</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get arg_names() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._arg_names }
+  set arg_names(args) { 
+    <span class="hljs-keyword">if</span> ( !_.isArray(args) ) <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">'The tests "arg_names" must be an array'</span>)
+    <span class="hljs-keyword">this</span>._arg_names = args
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-20">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <h4 id="-group-"><code>group</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get group() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._group }
+  set group(str) { <span class="hljs-keyword">this</span>._group = str }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-21">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-21">&#182;</a>
+              </div>
+              <h4 id="-word_quotes-"><code>word_quotes</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get word_quotes() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._word_quotes }
+  set word_quotes(str) { <span class="hljs-keyword">this</span>._word_quotes = str }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-22">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <h4 id="-default_value_name-"><code>default_value_name</code></h4>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  get default_value_name() { <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._default_value_name }
+  set default_value_name(str) { <span class="hljs-keyword">this</span>._default_value_name = str }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-23">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-23">&#182;</a>
+              </div>
+              <h2 id="public-methods">Public Methods</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-24">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p>Return <code>true</code> when test passes
+<code>false</code> when test fails</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  run (...args) {
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.test(...args)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-25">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-25">&#182;</a>
+              </div>
+              <p>Throw an error when the test fails 
+return <code>true</code> other wise</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  runThrow (...args) {
+    <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">this</span>.run(...args)
+    <span class="hljs-keyword">if</span> (!res) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.throwError(...args)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-26">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p>The logic is flipped on Message and Error. 
+An Error message will be returned on failure
+<code>undefined</code> when things are ok. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  runMessage (...args) {
+    <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">this</span>.run(...args)
+    <span class="hljs-keyword">if</span> (!res) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getMessage(...args)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-27">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-27">&#182;</a>
+              </div>
+              <p>The logic is flipped on Message and Error. 
+An Error will be returned on failure
+<code>undefined</code> when things are ok. </p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  runError (...args) {
+    <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">this</span>.run(...args)
+    <span class="hljs-keyword">if</span> (!res) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.getError(...args)
+    <span class="hljs-keyword">return</span> <span class="hljs-literal">undefined</span>
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-28">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p>Get the Error Message without running the test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  getMessage(...args){
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.buildMessageFromArgs(...args)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-29">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-29">&#182;</a>
+              </div>
+              <p>Get the Error Object without running the test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  getError(...args){
+    <span class="hljs-keyword">let</span> params = <span class="hljs-keyword">this</span>.argsToParams(...args)
+    <span class="hljs-keyword">let</span> msg = <span class="hljs-keyword">this</span>.buildMessage(params)
+    <span class="hljs-keyword">let</span> err = <span class="hljs-keyword">new</span> ValidationError(msg, params)
+    <span class="hljs-keyword">return</span> err
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-30">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p>Throw the Error without running the test</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  throwError(...args){
+    <span class="hljs-keyword">let</span> err = <span class="hljs-keyword">this</span>.getError(...args)
+    <span class="hljs-keyword">throw</span> err
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-31">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-31">&#182;</a>
+              </div>
+              <h2 id="private-methods">Private methods</h2>
+
+            </div>
+            
+        </li>
+        
+        
+        <li id="section-32">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p>Runs when you set a <code>.message</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  compileTemplate(){
+    debug(<span class="hljs-string">'template compiled for "%s" [%s]. options: '</span>, <span class="hljs-keyword">this</span>.label, <span class="hljs-keyword">this</span>._message, <span class="hljs-keyword">this</span>.template_options)
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>._template = _.template(<span class="hljs-keyword">this</span>._message, <span class="hljs-keyword">this</span>._template_options)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-33">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-33">&#182;</a>
+              </div>
+              <p>Fill the template with values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  buildMessage( params = {} ){
+    params.name = <span class="hljs-keyword">this</span>.strOrValue(params.name)
+    debug(<span class="hljs-string">'building message with for %s'</span>, <span class="hljs-keyword">this</span>.label, params)
+    <span class="hljs-keyword">if</span> ( _.isString(<span class="hljs-keyword">this</span>.message) ) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.template(params)
+    <span class="hljs-keyword">if</span> ( _.isFunction(<span class="hljs-keyword">this</span>.message) ) <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.message(params)
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">`The tests "message" property is the wrong type "<span class="hljs-subst">${<span class="hljs-keyword">typeof</span> <span class="hljs-keyword">this</span>.message}</span>`</span>)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-34">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p>Fill the template with values</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  buildMessageFromArgs( ...args ){
+    <span class="hljs-keyword">let</span> params = <span class="hljs-keyword">this</span>.argsToParams(...args)
+    <span class="hljs-keyword">return</span> <span class="hljs-keyword">this</span>.buildMessage(params)
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-35">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-35">&#182;</a>
+              </div>
+              <p>Create a name:value object from an array of function argument 
+names, and an array of argument values
+This is used for template generation</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  argsToParams(...args){</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-36">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p><code>[&#39;a&#39;,&#39;b&#39;] [1,2]</code> becomes <code>{ a:1, b:2 }</code></p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>    <span class="hljs-keyword">return</span> _.zipObject( [<span class="hljs-string">'test'</span>, ...this.arg_names, <span class="hljs-string">'name'</span>], [<span class="hljs-keyword">this</span>.label, ...args] )
+  }</pre></div></div>
+            
+        </li>
+        
+        
+        <li id="section-37">
+            <div class="annotation">
+              
+              <div class="pilwrap ">
+                <a class="pilcrow" href="#section-37">&#182;</a>
+              </div>
+              <p>Defaults a str to Value, or surrounds str in quotes. 
+For message output</p>
+
+            </div>
+            
+            <div class="content"><div class='highlight'><pre>  strOrValue(str){
+    <span class="hljs-keyword">let</span> quote = <span class="hljs-keyword">this</span>.word_quotes
+    <span class="hljs-keyword">return</span> ( str === <span class="hljs-literal">undefined</span> ) ? <span class="hljs-keyword">this</span>.default_value_name :  <span class="hljs-string">`<span class="hljs-subst">${quote}</span><span class="hljs-subst">${str}</span><span class="hljs-subst">${quote}</span>`</span>
+  }
+
+
+}
+
+
+<span class="hljs-built_in">module</span>.exports.ValidationError = ValidationError</pre></div></div>
+            
+        </li>
+        
+    </ul>
+  </div>
+</body>
+</html>

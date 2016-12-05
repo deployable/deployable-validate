@@ -35,19 +35,42 @@ validate = new Validate({ throw: true })
 
 ## run() Modes
 
-#### `throw`
+#### `{ throw: true }`
 
 Throw an error as it occurs. The default.
 
-#### `error`
+#### `{ error: true }`
 
 Return all error objects
 
-#### `message`
+#### `{ message: true }`
 
 Return all error message
 
-#### `results`
+#### `{ results: true }`
 
 Return all results, including inputs as an array
 
+
+###  Message templates
+
+Error message can be customised via mustache style template strings.
+
+Every test has a `value` to be tested and a `name` that default to `Value` if not supplied. 
+
+    "Field {{name}} should be a X. Instead it was {{value}}"
+
+Additional arguments can be names in each validation tests configuration. 
+
+[lib/validate_config.js](https://github.com/deployable/deployable-validate/blob/master/lib/validate_config.js)
+
+``` javascript
+
+  match: {
+    args: ['string', 'regex'],
+    test: ( string, regex ) => ( _.isString(string) && Boolean(string.match(regex)) ),
+    message: '{{name}} must match regular expression {{regex}}',
+    group: 'string'
+  }
+
+```

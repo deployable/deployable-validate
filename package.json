@@ -1,0 +1,33 @@
+{
+  "name": "deployable-validate",
+  "version": "0.1.0",
+  "description": "Validation Helpers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/deployable/node-deployable-validation.git"
+  },
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "test:int": "mocha test/int_*",
+    "test:unit": "mocha test/unit_*",
+    "test:coverage": "istanbul cover _mocha"
+  },
+  "keywords": [
+    "validation",
+    "error"
+  ],
+  "author": "matt@deployable.co",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^2.0",
+    "lodash": "~4.17.2",
+    "deployable-errors": "~0.5.0"
+  },
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "coffee-script": "~1.12.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
+  }
+}
